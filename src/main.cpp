@@ -53,7 +53,7 @@ int main( int argc, char* argv[] )
     // focalx,focaly,centerx,centery (image size is determined by Render() fcn )
     Eigen::Vector4f cam_params(fx, fy, cx, cy);
 
-    cv::Mat Depthmap;
+    // cv::Mat Depthmap;
     cv::Mat Normalmap;
 
 //-----------------------------------------------------------------------------    
