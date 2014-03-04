@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.4.6)
-SET(PROJECT_NAME libsdf)
+PROJECT("libsdf")
 
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
