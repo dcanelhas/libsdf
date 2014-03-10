@@ -204,7 +204,7 @@ namespace sdf
 
   /// Evaluates the SDF at a given location for a vector containing primitives (set operations are applied in order of placement in the vector)
   double 
-  SDF(const Eigen::Vector3d &location, std::vector<Primitive*> &primitives);
+  SDF(const Eigen::Vector3d &location, const std::vector<Primitive*> &primitives);
   
   /// Evalueate the numeric gradient of the SDF at the given location for a vector containing primitives. 
   Eigen::Vector3d 

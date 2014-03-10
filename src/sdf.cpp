@@ -14,11 +14,11 @@ namespace sdf
   };
 
   double 
-  SDF(const Eigen::Vector3d &location, std::vector<Primitive*> &primitives)
+  SDF(const Eigen::Vector3d &location, const std::vector<Primitive*> &primitives)
   {
     double d_value = 0.0;
 
-    for(std::vector<Primitive*>::iterator it = primitives.begin(); it != primitives.end(); ++it)
+    for(std::vector<Primitive*>::const_iterator it = primitives.begin(); it != primitives.end(); ++it)
     {
       Eigen::Vector3d location_warped = it[0]->transformation.inverse()*location;
       if( it == primitives.begin() ) d_value = it[0]->signedDistance(location_warped);
@@ -181,14 +181,15 @@ namespace sdf
               Z_img.at<float>(u,v)=std::numeric_limits<float>::quiet_NaN();    
               break;
           }
-          scaling = scaling_prev + (scaling-scaling_prev)*D_prev/(D_prev - (D - precision));
+          scaling = scaling_prev + ((scaling+precision) - scaling_prev)*D_prev/(D_prev - (D - precision));
 
           hit = true;
           float d = scaling*(viewAxis.dot(p));
           
           //conversion from range to depth
-          Z_img.at<float>(u,v)=fabs(d);// + scaling*scaling*distribution(generator)); //add noise dependent on the square of the distance
-          
+          // + scaling*scaling*distribution(generator)); //add noise dependent on the square of the distance
+          Z_img.at<float>(u,v)=fabs(d);
+
           break;
         }
         scaling_prev = scaling;
