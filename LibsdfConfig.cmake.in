@@ -1,0 +1,14 @@
+################################################################################
+# Libsdf source dir
+set( Libsdf_SOURCE_DIR "@CONFIG_SOURCE_DIR@")
+
+################################################################################
+# Libsdf build dir
+set( Libsdf_DIR "@CONFIG_DIR@")
+
+################################################################################
+# Compute paths
+get_filename_component(Libsdf_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set( Libsdf_INCLUDE_DIR  "@Libsdf_INCLUDE_DIR@" )
+set( Libsdf_INCLUDE_DIRS  "@Libsdf_INCLUDE_DIR@" )
