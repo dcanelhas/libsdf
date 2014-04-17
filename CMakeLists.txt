@@ -33,7 +33,7 @@ endif(COMMAND cmake_policy)
 
 # Create variables used for exporting (from build tree) in LibsdfConfig.cmake
 SET( Libsdf_LIBRARIES "" )
-SET( Libsdf_INCLUDE_DIR ${PROJECT_SOURCE_DIR} )
+SET( Libsdf_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include )
 
 # Eigen3 library
 find_package(Eigen3 REQUIRED)

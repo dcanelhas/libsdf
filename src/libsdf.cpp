@@ -1,4 +1,4 @@
-#include "sdf.h"
+#include "libsdf.h"
 #include <iostream>
 
 namespace sdf

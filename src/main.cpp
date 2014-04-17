@@ -1,4 +1,4 @@
-#include "sdf.h"
+#include "libsdf.h"
 
 int main( int argc, char* argv[] )
 {
