@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.4.6)
-PROJECT("libsdf")
+PROJECT("Libsdf")
 
 # Set the build type.  Options are:
 #  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
@@ -53,3 +53,33 @@ add_executable(demo_app
 target_link_libraries(demo_app
   sdf
 )
+
+# Export package for use from the build tree
+EXPORT( PACKAGE Libsdf )
+
+# Create the LibsdfConfig.cmake file for other cmake projects.
+# ... for the build tree
+SET( CONFIG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+SET( CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfig.cmake @ONLY )
+# ... for the install tree
+SET( CMAKECONFIG_INSTALL_DIR lib/cmake/Libsdf )
+FILE( RELATIVE_PATH REL_INCLUDE_DIR
+    "${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}"
+    "${CMAKE_INSTALL_PREFIX}/include" )
+
+SET( Sophus_INCLUDE_DIR "\${Libsdf_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
+SET( CONFIG_SOURCE_DIR )
+SET( CONFIG_DIR )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibsdfConfig.cmake @ONLY )
+
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibsdfConfig.cmake"
+        DESTINATION ${CMAKECONFIG_INSTALL_DIR} )
+
+# Install headers
+INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING PATTERN "*.h" )
+
+
