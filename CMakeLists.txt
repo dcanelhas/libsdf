@@ -31,10 +31,6 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-# Create variables used for exporting (from build tree) in LibsdfConfig.cmake
-SET( Libsdf_LIBRARIES "" )
-SET( Libsdf_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include )
-
 # Eigen3 library
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
@@ -48,10 +44,10 @@ add_definitions(${OPENCV_DEFINITIONS})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_library(sdf 
-  src/sdf.cpp)
+add_library(${PROJECT_NAME} 
+  src/libsdf.cpp)
 
-target_link_libraries(sdf
+target_link_libraries(${PROJECT_NAME}
   ${OpenCV_LIBS}
 )  
 
@@ -59,35 +55,52 @@ add_executable(demo_app
   src/main.cpp )
 
 target_link_libraries(demo_app
-  sdf
+  ${PROJECT_NAME}
 )
 
-# Export package for use from the build tree
-EXPORT( PACKAGE Libsdf )
+# Headers for Libsdf
+SET( Libsdf_HEADERS
+      include/libsdf.h
+   )
+INSTALL( FILES ${Libsdf_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 
-# Create the LibsdfConfig.cmake file for other cmake projects.
-# ... for the build tree
-SET( CONFIG_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-SET( CONFIG_DIR ${CMAKE_CURRENT_BINARY_DIR})
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfig.cmake @ONLY )
-# ... for the install tree
+##############################################################################
+# Figure out the relative path from the installed Config.cmake file to the
+# install prefix. This relative path will be configured into LibsdfConfig.cmake.
 SET( CMAKECONFIG_INSTALL_DIR lib/cmake/Libsdf )
 FILE( RELATIVE_PATH REL_INCLUDE_DIR
     "${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR}"
     "${CMAKE_INSTALL_PREFIX}/include" )
 
-SET( Sophus_INCLUDE_DIR "\${Libsdf_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
-SET( CONFIG_SOURCE_DIR )
-SET( CONFIG_DIR )
+# Add package to CMake package registery for use from the build tree
+EXPORT( TARGETS Libsdf FILE "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake" )
+
+# Add package to CMake package registery for use from the build tree
+option( EXPORT_${PROJECT_NAME}
+  "Should the ${PROJECT_NAME} package be exported for use by other software" ON )
+
+if( EXPORT_${PROJECT_NAME} )
+  export( PACKAGE ${PROJECT_NAME} )
+endif()
+
+# Install the export set for use with the install tree
+INSTALL( EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+
+# Create the LibsdfConfig.cmake file for other cmake projects: FIND_PACKAGE( Libsdf )
+# ... for the build tree
+set( EXPORT_LIB_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" )
+SET( CONF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include )
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
+                ${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfig.cmake @ONLY )
+# ... for the install tree
+SET( CONF_INCLUDE_DIR "\${Libsdf_CMAKE_DIR}/${REL_INCLUDE_DIR}" )
 CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibsdfConfig.cmake @ONLY )
 
+# Version information
+#configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfigVersion.cmake.in
+#  "${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfigVersion.cmake" @ONLY)
+
 INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/LibsdfConfig.cmake"
+              "${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfigVersion.cmake"
         DESTINATION ${CMAKECONFIG_INSTALL_DIR} )
-
-# Install headers
-INSTALL(DIRECTORY sophus DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-        FILES_MATCHING PATTERN "*.h" )
-
-

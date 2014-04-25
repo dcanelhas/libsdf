@@ -1,14 +1,12 @@
-################################################################################
-# Libsdf source dir
-set( Libsdf_SOURCE_DIR "@CONFIG_SOURCE_DIR@")
-
-################################################################################
-# Libsdf build dir
-set( Libsdf_DIR "@CONFIG_DIR@")
-
-################################################################################
 # Compute paths
-get_filename_component(Libsdf_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+get_filename_component( Libsdf_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH )
 
-set( Libsdf_INCLUDE_DIR  "@Libsdf_INCLUDE_DIR@" )
-set( Libsdf_INCLUDE_DIRS  "@Libsdf_INCLUDE_DIR@" )
+# Library dependencies (contains definitions for IMPORTED targets)
+if( NOT TARGET Libsdf AND NOT Libsdf_BINARY_DIR )
+  include( "${Libsdf_CMAKE_DIR}/LibsdfTargets.cmake" )
+endif()
+
+set( Libsdf_INCLUDE_DIRS "@EXPORT_LIB_INC_DIR@" )
+set( Libsdf_INCLUDE_DIR  "@EXPORT_LIB_INC_DIR@" )
+set( Libsdf_LIBRARIES Libsdf )
+set( Libsdf_LIBRARY   Libsdf )
