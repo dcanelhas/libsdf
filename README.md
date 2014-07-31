@@ -5,6 +5,7 @@
 * eigen 3
 * OpenCV 2.x
 * cmake 
+* gcc 4.8 most likely
 
 in Ubuntu these can be obtained by executing:
 ```bash
