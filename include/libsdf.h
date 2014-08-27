@@ -227,17 +227,16 @@ namespace sdf
     cv::Mat &Normals);
 
 /// Ray-casts an image of size rows x cols of the SDF at a camera whose pose is given by the supplied transformation. Results in a depthmap written to Depth 
-void RenderDepth(
-  const Eigen::Affine3d &transformation, 
-  const int rows, 
-  const int cols, 
-  Eigen::Vector4f &cam_params, 
-  const int max_steps, 
-  const float max_ray_length, 
-  const float precision, 
+void RenderDepth(const Eigen::Affine3d &transformation,
+  const int rows,
+  const int cols,
+  Eigen::Vector4f &cam_params,
+  const int max_steps,
+  const float max_ray_length,
+  const float min_ray_length,
+  const float precision,
   std::vector<sdf::Primitive*> &primitives,
   cv::Mat &Depth);
-
 }//sdf
 
 #endif

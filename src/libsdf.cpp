@@ -138,7 +138,8 @@ namespace sdf
     const int cols, 
     Eigen::Vector4f &cam_params, 
     const int max_steps, 
-    const float max_ray_length, 
+    const float max_ray_length,
+    const float min_ray_length,
     const float precision, 
     std::vector<Primitive*> &primitives, 
     cv::Mat &Depth)
@@ -165,7 +166,7 @@ namespace sdf
 
       p.normalize();
             
-      double scaling = 0.4;
+      double scaling = min_ray_length;
       double scaling_prev=0;
       double D = 1.0;
       int steps=0;
@@ -176,7 +177,7 @@ namespace sdf
         D = sdf::SDF(camera + p*scaling, primitives);
         if(D < precision)
         {
-          if(scaling_prev < 0.4) 
+          if(scaling_prev < min_ray_length)
           {
               Z_img.at<float>(u,v)=std::numeric_limits<float>::quiet_NaN();    
               break;
