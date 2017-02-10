@@ -22,7 +22,7 @@ namespace sdf
   {
   public:    
     virtual double signedDistance(Eigen::Vector3d &location) = 0;
-
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     /// flips the sign of the distance field so that positive/negative = outside/inside are reversed
     bool invert;
     /// defines which set operation should be applied with this primitive relative to the others

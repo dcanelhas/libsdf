@@ -53,13 +53,14 @@ int main( int argc, char* argv[] )
     // focalx,focaly,centerx,centery (image size is determined by Render() fcn )
     Eigen::Vector4f cam_params(fx, fy, cx, cy);
 
-    // cv::Mat Depthmap;
+    cv::Mat Depthmap;
     cv::Mat Normalmap;
 
 //-----------------------------------------------------------------------------    
 //Do some rendering and animation
 //-----------------------------------------------------------------------------    
     // A simple animation loop
+      
     for (int i = -150; i < 60; ++i)
     {
       //time steps      
@@ -67,10 +68,9 @@ int main( int argc, char* argv[] )
 
       // move the camera in an elliptic 3D spiral with pure translation (X Y Z)
       Tcam.translation() = Eigen::Vector3d( 
-        cos(4*M_PI*t/180), 
-        0.6*sin(4*M_PI*t/180), 
-        t*0.01);
-      
+          cos(4*M_PI*t/180), 
+          0.6*sin(4*M_PI*t/180), 
+          t*0.01);
 
       //change the rotation for one of the objects at each iteration
       T.linear() = ( 
@@ -82,14 +82,13 @@ int main( int argc, char* argv[] )
 
       
       //Render Normal-map from synthetic environment 
-      sdf::RenderNormal(Tcam, 480, 640, cam_params, 60, 20, 0.02, geometry,Normalmap);
+      sdf::RenderNormal(Tcam, 480, 640, cam_params, 32, 10, 0.05, geometry,Normalmap);
       cv::imshow("Normals", 0.5-Normalmap*0.5);
-      char q = cv::waitKey(2);
-
+    
       //Render Depth image from synthetic environment     
-      // sdf::RenderDepth(Tcam, 480, 640, cam_params, 60, 20, 0.02, geometry,Depthmap);      
-      // cv::imshow("Depth", Depthmap/8.0);
-      // char q = cv::waitKey(2);
+      sdf::RenderDepth(Tcam, 480, 640, cam_params, 32, 10, 0.4, 0.05, geometry,Depthmap);      
+      cv::imshow("Depth", Depthmap/10.0);
+      char q = cv::waitKey(2);
 
     if(q == 'q' || q  == 27 || q  == 71 ) { exit(0); }
 

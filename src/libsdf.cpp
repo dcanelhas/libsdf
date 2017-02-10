@@ -81,7 +81,7 @@ namespace sdf
     const Eigen::Vector3d viewAxis = (transformation * Eigen::Vector3d(0.0,0.0,1.0+1e-12) - camera).normalized(); 
     
     //Rendering loop
-   #pragma omp parallel for 
+   #pragma omp parallel for collapse(2)
     for(int u = 0; u < rows; ++u)
     {
       for(int v = 0; v < cols; ++v)
@@ -155,7 +155,7 @@ namespace sdf
    Eigen::Vector3d viewAxis = (transformation * Eigen::Vector3d(0.0,0.0,1.0+1e-12) - camera).normalized();
 
   //Rendering loop
-  #pragma omp parallel for 
+  #pragma omp parallel for collapse(2)
   for(int u = 0; u < rows; ++u)
   {
     for(int v = 0; v < cols; ++v)

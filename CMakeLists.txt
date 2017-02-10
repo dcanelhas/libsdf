@@ -84,7 +84,7 @@ if( EXPORT_${PROJECT_NAME} )
 endif()
 
 # Install the export set for use with the install tree
-INSTALL( EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKECONFIG_INSTALL_DIR})
+#INSTALL( EXPORT ${PROJECT_NAME}Targets DESTINATION ${CMAKECONFIG_INSTALL_DIR})
 
 # Create the LibsdfConfig.cmake file for other cmake projects: FIND_PACKAGE( Libsdf )
 # ... for the build tree
