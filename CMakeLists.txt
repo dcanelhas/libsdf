@@ -36,26 +36,23 @@ find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN3_DEFINITIONS})
 
-#OpenCV
-find_package(OpenCV REQUIRED)
-include_directories(${OPENCV_INCLUDE_DIRS})
-link_directories(${OPENCV_LIBRARY_DIRS})
-add_definitions(${OPENCV_DEFINITIONS})
+#needed for the demo app, should work for Linux (and MacOS?)
+find_package(X11 REQUIRED)
+include_directories(${X11_INCLUDE_DIR})
+
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/deps)
 
 add_library(${PROJECT_NAME} 
   src/libsdf.cpp)
-
-target_link_libraries(${PROJECT_NAME}
-  ${OpenCV_LIBS}
-)  
 
 add_executable(demo_app
   src/main.cpp )
 
 target_link_libraries(demo_app
   ${PROJECT_NAME}
+  ${X11_LIBRARIES}
 )
 
 # Headers for Libsdf

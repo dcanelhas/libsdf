@@ -73,11 +73,10 @@ namespace sdf
     const float max_ray_length, 
     const float precision, 
     std::vector<Primitive*> &primitives,
-    cv::Mat &Normals)
+    CImg<float> &Normals)
   {
     
-    cv::Mat Nmap(rows, cols, CV_32FC3);
-    const Eigen::Vector3d camera = transformation * Eigen::Vector3d(0.0,0.0,0.0);
+    const Eigen::Vector3d camera = transformation.translation();
     const Eigen::Vector3d viewAxis = (transformation * Eigen::Vector3d(0.0,0.0,1.0+1e-12) - camera).normalized(); 
     
     //Rendering loop
@@ -108,9 +107,9 @@ namespace sdf
             Eigen::Vector3d normal_vector = SDFGradient(camera + p*scaling,primitives);            
             normal_vector.normalize();
 
-            Nmap.at<cv::Vec3f>(u,v)[1]=(normal_vector(0));
-            Nmap.at<cv::Vec3f>(u,v)[2]=(normal_vector(1));
-            Nmap.at<cv::Vec3f>(u,v)[0]=(normal_vector(2));
+            Normals(v,u,0,0)=normal_vector(0);
+            Normals(v,u,0,1)=normal_vector(1);
+            Normals(v,u,0,2)=normal_vector(2);
 
             break;
           }
@@ -120,15 +119,14 @@ namespace sdf
         }//ray
         if(!hit)     
         {
-          Nmap.at<cv::Vec3f>(u,v)[0]=std::numeric_limits<float>::quiet_NaN();
-          Nmap.at<cv::Vec3f>(u,v)[1]=std::numeric_limits<float>::quiet_NaN();
-          Nmap.at<cv::Vec3f>(u,v)[2]=std::numeric_limits<float>::quiet_NaN();
+          Normals(v,u,0,0)=std::numeric_limits<float>::quiet_NaN();
+          Normals(v,u,0,1)=std::numeric_limits<float>::quiet_NaN();
+          Normals(v,u,0,2)=std::numeric_limits<float>::quiet_NaN();
         
         }//no hit
       }//col
     }//row 
 
-    Normals = Nmap;
     return;
   }
 
@@ -142,14 +140,14 @@ namespace sdf
     const float min_ray_length,
     const float precision, 
     std::vector<Primitive*> &primitives, 
-    cv::Mat &Depth)
+    CImg<float> &Depth)
   {
 
   // add noise to depth
   // std::mt19937_64 generator;
   // std::normal_distribution<float> distribution(0,RENDER_NOISE_STD);
 
-  cv::Mat Z_img( rows, cols, CV_32FC1);
+  // cv::Mat Z_img( rows, cols, CV_32FC1);
 
    Eigen::Vector3d camera = transformation * Eigen::Vector3d(0.0,0.0,0.0);
    Eigen::Vector3d viewAxis = (transformation * Eigen::Vector3d(0.0,0.0,1.0+1e-12) - camera).normalized();
@@ -179,7 +177,7 @@ namespace sdf
         {
           if(scaling_prev < min_ray_length)
           {
-              Z_img.at<float>(u,v)=std::numeric_limits<float>::quiet_NaN();    
+              Depth(v,u)=std::numeric_limits<float>::quiet_NaN();    
               break;
           }
           scaling = scaling_prev + ((scaling+precision) - scaling_prev)*D_prev/(D_prev - (D - precision));
@@ -189,7 +187,7 @@ namespace sdf
           
           //conversion from range to depth
           // + scaling*scaling*distribution(generator)); //add noise dependent on the square of the distance
-          Z_img.at<float>(u,v)=fabs(d);
+          Depth(v,u)=fabs(d);
 
           break;
         }
@@ -199,11 +197,10 @@ namespace sdf
       }//ray
       if(!hit)     
       {
-        Z_img.at<float>(u,v)=std::numeric_limits<float>::quiet_NaN();    
+        Depth(v,u)=std::numeric_limits<float>::quiet_NaN();    
       }//no hit
     }//NUM_COLS
   }//NUM_ROWS
-  Depth = Z_img;
   return;
   }
 }//sdf

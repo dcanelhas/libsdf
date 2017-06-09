@@ -3,11 +3,15 @@
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
+#include <Eigen/StdVector>
 #include <vector>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp> 
+// #include <opencv2/core/core.hpp>
+// #include <opencv2/highgui/highgui.hpp>
+// #include <opencv2/imgproc/imgproc.hpp> 
+#include "CImg.h"
+
+using namespace cimg_library;
 
 namespace Eigen{ typedef Eigen::Matrix<double,6,1> Vector6d; }
 
@@ -224,7 +228,7 @@ namespace sdf
     const float max_ray_length, 
     const float precision, 
     std::vector<Primitive*> &primitives,
-    cv::Mat &Normals);
+    CImg<float> &Normals);
 
 /// Ray-casts an image of size rows x cols of the SDF at a camera whose pose is given by the supplied transformation. Results in a depthmap written to Depth 
 void RenderDepth(const Eigen::Affine3d &transformation,
@@ -236,7 +240,7 @@ void RenderDepth(const Eigen::Affine3d &transformation,
   const float min_ray_length,
   const float precision,
   std::vector<sdf::Primitive*> &primitives,
-  cv::Mat &Depth);
+  CImg<float> &Depth);
 }//sdf
 
 #endif

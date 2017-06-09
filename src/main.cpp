@@ -53,16 +53,24 @@ int main( int argc, char* argv[] )
     // focalx,focaly,centerx,centery (image size is determined by Render() fcn )
     Eigen::Vector4f cam_params(fx, fy, cx, cy);
 
-    cv::Mat Depthmap;
-    cv::Mat Normalmap;
+    constexpr int im_width = 640;
+    constexpr int im_height = 480;
+
+    CImg<float> Depthmap(im_width,im_height,1,1); 
+    CImg<float> Normalmap(im_width,im_height,1,3); 
 
 //-----------------------------------------------------------------------------    
 //Do some rendering and animation
 //-----------------------------------------------------------------------------    
     // A simple animation loop
-      
+    CImgDisplay depth_disp(Depthmap,"Depth image"), normal_disp(Normalmap, "Normal Map");
+
+  
+
+
     for (int i = -150; i < 60; ++i)
     {
+    
       //time steps      
       double t = double(i);
 
@@ -79,20 +87,18 @@ int main( int argc, char* argv[] )
                     Eigen::AngleAxisd(i*M_PI/50, Eigen::Vector3d::UnitX()) 
                     ).toRotationMatrix(); //rotation about X 
       geometry[4]->transformation = T;
-
       
       //Render Normal-map from synthetic environment 
-      sdf::RenderNormal(Tcam, 480, 640, cam_params, 32, 10, 0.05, geometry,Normalmap);
-      cv::imshow("Normals", 0.5-Normalmap*0.5);
-    
-      //Render Depth image from synthetic environment     
-      sdf::RenderDepth(Tcam, 480, 640, cam_params, 32, 10, 0.4, 0.05, geometry,Depthmap);      
-      cv::imshow("Depth", Depthmap/10.0);
-      char q = cv::waitKey(2);
+      sdf::RenderNormal(Tcam, im_height, im_width, cam_params, 32, 10, 0.05, geometry,Normalmap);
+      Normalmap.display(normal_disp);
 
-    if(q == 'q' || q  == 27 || q  == 71 ) { exit(0); }
+      //Render Depth image from synthetic environment     
+      sdf::RenderDepth(Tcam, im_height, im_width, cam_params, 32, 10, 0.4, 0.05, geometry,Depthmap);      
+      Depthmap.display(depth_disp);
+      
+      if(normal_disp.is_closed() || depth_disp.is_closed()) exit(0);
 
     }
-    cv::waitKey();
-   return 0;
+    normal_disp.wait();
+    return 0;
 }
