@@ -19,7 +19,7 @@ ENDIF()
 
 IF( CMAKE_COMPILER_IS_GNUCXX )
    SET(CMAKE_CXX_FLAGS "-std=c++11 -Wno-deprecated")
-   SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g")
+   SET(CMAKE_CXX_FLAGS_DEBUG  "-O3 -g -fopenmp")
    SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -fopenmp -march=native -Wno-deprecated")
  
    ADD_DEFINITIONS("-Wall")
@@ -45,10 +45,13 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/deps)
 
 add_library(${PROJECT_NAME} 
-  src/libsdf.cpp)
+  src/libsdf.cpp
+  deps/CImg.h
+  )
 
 add_executable(demo_app
-  src/main.cpp )
+  src/main.cpp
+  deps/CImg.h )
 
 target_link_libraries(demo_app
   ${PROJECT_NAME}
@@ -85,8 +88,8 @@ endif()
 
 # Create the LibsdfConfig.cmake file for other cmake projects: FIND_PACKAGE( Libsdf )
 # ... for the build tree
-set( EXPORT_LIB_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" )
-SET( CONF_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include )
+set( EXPORT_LIB_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/deps" )
+SET( CONF_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/LibsdfConfig.cmake.in
                 ${CMAKE_CURRENT_BINARY_DIR}/LibsdfConfig.cmake @ONLY )
 # ... for the install tree
