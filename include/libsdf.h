@@ -146,9 +146,9 @@ namespace sdf
 
     double signedDistance(Eigen::Vector3d &location)
     {
-      Eigen::Vector2d loc_xz(location(0), location(2));
+      Eigen::Vector2d loc_xy(location(0), location(1));
       Eigen::Vector2d cyl_xy(parameters(0), parameters(1));
-      double value = (loc_xz-cyl_xy).norm() - parameters(2);
+      double value = (loc_xy-cyl_xy).norm() - parameters(2);
       return (invert) ? -value : value;
     }
   };
